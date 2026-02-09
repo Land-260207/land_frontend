@@ -1,10 +1,12 @@
 import './App.css'
+import Controller from './components/controller/controller';
 import Map from './components/map/map';
 
 function App() {
   return (
-    <div className='min-h-screen'>
+    <div className='h-screen w-screen p-12'>
       <Map />
+      <Controller />
     </div>
   );
 }
