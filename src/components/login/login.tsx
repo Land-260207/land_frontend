@@ -1,11 +1,9 @@
 import { useState } from "react";
 import api from "../../common/api";
+import { useNavigate } from "react-router-dom";
 
-type LoginProps = {
-  setAuthMode: React.Dispatch<React.SetStateAction<'REGISTER' | 'LOGIN' | 'LOGGED_IN'>>
-}
-
-const Login = ({ setAuthMode }: LoginProps) => {
+const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,28 +19,16 @@ const Login = ({ setAuthMode }: LoginProps) => {
     setError(null);
 
     try {
-      const response = await api(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const res = await api.post('/auth/login', {
+        username, password
       });
 
-      const data = await response.json();
-
-      if (!data.success) {
-        setError(data.message || "로그인에 실패했습니다.");
-        return;
-      }
-
-      localStorage.setItem('accessToken', data.data.accessToken);
+      localStorage.setItem('accessToken', res.data.data.accessToken);
       localStorage.setItem('username', username);
-      setAuthMode('LOGGED_IN');
-
-    } catch (err) {
-      console.error(err);
-      setError("서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.");
+      navigate('/main')
+    } catch(error: any) {
+      console.error(error);
+      setError(error.response.data.message || '서버 통신 오류');
     } finally {
       setIsLoading(false);
     }
@@ -55,46 +41,48 @@ const Login = ({ setAuthMode }: LoginProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full gap-4">
+    <div className="flex flex-col items-center justify-center w-full h-full gap-4">
       {error && (
-        <p className="text-red-500 text-sm font-medium bg-red-50 px-4 py-2 rounded-lg">
+        <p className="px-4 py-2 text-sm font-medium text-center text-red-500 rounded-lg bg-red-50">
           {error}
         </p>
       )}
 
       <input
         type="text"
-        placeholder="username"
+        placeholder="아이디"
         onKeyDown={handleKeyDown}
-        className="
-          pl-3 pr-3 rounded-xl
-          border-none focus:outline-none
-          text-sm h-[30px] w-[300px]
-        "
+        className="pl-3 pr-3 rounded-xl border-none focus:outline-none text-sm h-[5%] w-[30%] shadow-lg"
         onChange={(e) => setUsername(e.target.value)}
         disabled={isLoading}
       />
 
       <input
         type="password"
-        placeholder="password"
+        placeholder="비밀번호"
         onKeyDown={handleKeyDown}
-        className="
-          pl-3 pr-3 rounded-xl
-          border-none focus:outline-none
-          text-sm h-[30px] w-[300px]
-        "
+        className="pl-3 pr-3 rounded-xl border-none focus:outline-none text-sm h-[5%] w-[30%] shadow-lg"
         onChange={(e) => setPassword(e.target.value)}
         disabled={isLoading}
       />
 
-      <button
-        onClick={handleLogin}
-        disabled={isLoading}
-        className="bg-white h-[30px] w-[120px] rounded-xl text-xs font-bold m-2"
-      >
-        {isLoading ? '로그인 중...' : 'LOGIN'}
-      </button>
+      <div>
+        <button
+          onClick={handleLogin}
+          disabled={isLoading}
+          className="bg-white h-[30px] w-[100px] rounded-xl text-xs font-bold m-2 shadow-lg"
+        >
+          {isLoading ? '로그인 중...' : '로그인'}
+        </button>
+
+        <button
+          onClick={() => navigate('/register')}
+          disabled={isLoading}
+          className="bg-white h-[30px] w-[100px] rounded-xl text-xs font-bold m-2 shadow-lg"
+        >
+          회원가입하기
+        </button>
+      </div>
     </div>
   );
 };
