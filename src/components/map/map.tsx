@@ -22,11 +22,11 @@ const Map = () => {
         url='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
       />
 
-      <Marker position={position}>
+      {/* <Marker position={position}>
         <Popup>
           a
         </Popup>
-      </Marker>
+      </Marker> */}
     </MapContainer>
   );
 };
