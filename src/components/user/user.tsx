@@ -8,7 +8,7 @@ type UserProps = {
   profile: userType | null,
   land: landType | null,
   setLand: React.Dispatch<React.SetStateAction<landType | null>>
-}
+};
 
 const User = ({ profile, land, setLand }: UserProps) => {
   return (
