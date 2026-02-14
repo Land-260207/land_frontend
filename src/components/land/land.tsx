@@ -16,7 +16,7 @@ const Land = ({ profile, setLand }: LandProps) => {
   }, [profile]);
 
   return (
-    <div className="absolute top-12 right-12 h-[90%] w-[25%] bg-white/80 rounded-xl flex flex-col items-start p-5 shadow-2xl pointer-events-auto space-y-5">
+    <div className="absolute top-12 right-12 h-[90%] w-[20%] bg-white/80 rounded-xl flex flex-col items-start p-5 shadow-2xl pointer-events-auto space-y-5">
       <div className="h-[50%] w-full bg-white p-2 rounded-xl shadow-xl">
         <h3 className="mb-4 text-lg font-semibold text-center">
           보유 중인 토지

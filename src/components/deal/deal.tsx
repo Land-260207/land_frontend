@@ -76,34 +76,40 @@ const Deal = ({ profile, land, setLand }: DealProps) => {
     <div className="font-semibold h-[33%] w-full bg-white/80 p-5 shadow-xl rounded-xl">
       <span className="flex justify-between font-normal">
         <p>{profile?.username}</p>
-        <button onClick={handleLogout}>
-          로그아웃
-        </button>
+        <button onClick={handleLogout}>로그아웃</button>
       </span>
+
       <div className="h-full mt-3 space-y-1">
         <p>잔고: {Number(profile?.balance).toLocaleString('ko-KR')}원</p>
         <p>{land ? `${land.name} ${Number(landPrice).toLocaleString('ko-KR')}원` : '오른쪽에서 토지를 선택해주세요.'}</p>
+
         {land && (
-          <div className="h-full space-y-1">
+          <div className="flex flex-col h-full space-y-1">
             <p className="text-gray-600">소유자: {land.owner_id ? land.Owner?.username : '없음'}</p>
             <p>남는 돈: {(Number(profile?.balance) - Number(landPrice)).toLocaleString('ko-KR')}원</p>
 
-            <div className="flex justify-center h-full">
-              <button 
-                className={`
-                  w-full mt-2 h-[25%] rounded-xl shadow-lg
-                  bg-${land.owner_id === profile?.id || Number(land.price) > Number(profile?.balance) ? 'gray' : 'green'}-500/80
-                  hover:bg-${land.owner_id === profile?.id ? 'gray' : 'green'}-500
-                `}
-
+            <div className="pt-2">
+              <button
                 onClick={handleDeal}
+                disabled={land.owner_id === profile?.id || Number(land.price) > Number(profile?.balance)}
+                className={`
+                  w-full h-14 rounded-xl shadow-lg text-xl font-semibold text-white transition-colors
+                  ${
+                    land.owner_id === profile?.id
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : Number(land.price) > Number(profile?.balance)
+                      ? 'bg-red-400/80 hover:bg-red-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700 active:bg-green-800'
+                  }
+                `}
               >
-                <p className="text-xl font-semibold text-white">
-                  {land.owner_id && land.owner_id === profile?.id && '본인 소유 토지입니다. (거래 불가)'}
-                  {land.owner_id !== profile?.id && Number(land.price) > Number(profile?.balance) && '돈이 부족합니다. (거래 불가)'}
-                  {land.owner_id && land.owner_id !== profile?.id && Number(land.price) <= Number(profile?.balance) && '거래 요청'}
-                  {!land.owner_id && Number(land.price) <= Number(profile?.balance) && '매수'}
-                </p>
+                {land.owner_id === profile?.id
+                  ? '본인 소유 토지입니다'
+                  : Number(land.price) > Number(profile?.balance)
+                  ? '잔고 부족으로 구매 불가'
+                  : land.owner_id
+                  ? '거래 요청하기'
+                  : '매수하기'}
               </button>
             </div>
           </div>

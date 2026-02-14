@@ -12,7 +12,7 @@ type UserProps = {
 
 const User = ({ profile, land, setLand }: UserProps) => {
   return (
-    <div className="absolute top-12 left-12 h-[90%] w-[25%] bg-white/80 flex flex-col items-start p-5 shadow-2xl pointer-events-auto space-y-5 rounded-xl">
+    <div className="absolute top-12 left-12 h-[90%] w-[20%] bg-white/80 flex flex-col items-start p-5 shadow-2xl pointer-events-auto space-y-5 rounded-xl">
       <Rank />
       <Deal profile={profile} land={land} setLand={setLand} />
       <DealList />
