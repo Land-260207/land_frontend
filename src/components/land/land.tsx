@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { landType } from "../../common/types/land.type";
 import Search from "../search/search";
 import type { userType } from "../../common/types/user.type";
+import api from "../../common/api";
 
 type LandProps = {
   profile: userType | null,
@@ -10,6 +11,16 @@ type LandProps = {
 
 const Land = ({ profile, setLand }: LandProps) => {
   const [lands, setLands] = useState<landType[]>();
+
+  const handleSellLand = async (sig_cd: string) => {
+    try {
+      const res = await api.post(`/land/sell/${sig_cd}`);
+      setLand(res.data.data.land);
+    } catch(error: any) {
+      console.error(error);
+      if (error.status === 400) alert(error.response.data.message || '소유자만 판매 가능합니다.');
+    }
+  }
 
   useEffect(() => {
     setLands(profile?.Lands);
@@ -54,9 +65,16 @@ const Land = ({ profile, setLand }: LandProps) => {
                     <span className="text-sm text-gray-600">{land.full_name}</span>
                   </div>
 
-                  <span className={`text-sm ${rateColor}`}>
-                    {rate != null ? `${rateSign}${rateNum.toFixed(2)}%` : "변화 없음"}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className={`text-sm ${rateColor}`}>
+                      {rate != null ? `${rateSign}${rateNum.toFixed(2)}%` : "변화 없음"}
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      <button onClick={() => handleSellLand(land.sig_cd)}>
+                        매도
+                      </button>
+                    </span>
+                  </div>
                 </li>
               );
             })}
