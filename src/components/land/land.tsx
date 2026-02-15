@@ -25,7 +25,7 @@ const Land = ({ profile, setLand }: LandProps) => {
         {lands && lands.length > 0 ? (
           <ul className="h-[90%] overflow-auto">
             {lands.map((land) => {
-              const rate = land.LandPriceHistory?.price_change_rate;
+              const rate = land.price_change_rate;
               const rateNum = rate != null ? Number(rate) : 0;
 
               let rateColor = "text-gray-600";
