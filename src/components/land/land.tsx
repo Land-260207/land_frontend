@@ -1,41 +1,41 @@
-import { useEffect, useState } from "react";
 import type { landType } from "../../common/types/land.type";
 import Search from "../search/search";
-import type { userType } from "../../common/types/user.type";
 import api from "../../common/api";
+import { useEffect } from "react";
 
 type LandProps = {
-  profile: userType | null,
+  lands: landType[],
+  landSocket: any,
+  userLands: landType[],
+  setUserLands: React.Dispatch<React.SetStateAction<landType[]>>,
   setLand: React.Dispatch<React.SetStateAction<landType | null>>
 }
 
-const Land = ({ profile, setLand }: LandProps) => {
-  const [lands, setLands] = useState<landType[]>();
-
+const Land = ({ lands, landSocket, userLands, setUserLands, setLand }: LandProps) => {
   const handleSellLand = async (sig_cd: string) => {
-    try {
-      const res = await api.post(`/land/sell/${sig_cd}`);
-      setLand(res.data.data.land);
-    } catch(error: any) {
-      console.error(error);
-      if (error.status === 400) alert(error.response.data.message || '소유자만 판매 가능합니다.');
-    }
-  }
+    await landSocket.emit('sell', sig_cd);
+  };
 
   useEffect(() => {
-    setLands(profile?.Lands);
-  }, [profile]);
+    const handleGetUserLands = async () => {
+      const res = await api.get('/land/my');
+
+      setUserLands(res.data.data.lands);
+    };
+
+    handleGetUserLands();
+  }, []);
 
   return (
-    <div className="absolute top-12 right-12 h-[90%] w-[20%] bg-white/80 rounded-xl flex flex-col items-start p-5 shadow-2xl pointer-events-auto space-y-5">
-      <div className="h-[50%] w-full bg-white p-2 rounded-xl shadow-xl">
-        <h3 className="mb-4 text-lg font-semibold text-center">
-          보유 중인 토지
+    <div className="absolute top-12 right-12 h-[90%] w-[20%] rounded-xl flex flex-col items-start pointer-events-none space-y-5">
+      <div className="h-[50%] w-full bg-white/80 p-2 rounded-xl shadow-xl pointer-events-auto">
+        <h3 className="flex justify-center gap-5 mb-4 text-lg font-semibold text-center">
+          <p>보유 중인 토지</p>
         </h3>
 
-        {lands && lands.length > 0 ? (
+        {userLands.length > 0 ? (
           <ul className="h-[90%] overflow-auto">
-            {lands.map((land) => {
+            {userLands.map((land) => {
               const rate = land.price_change_rate;
               const rateNum = rate != null ? Number(rate) : 0;
 
@@ -65,7 +65,7 @@ const Land = ({ profile, setLand }: LandProps) => {
                     <span className="text-sm text-gray-600">{land.full_name}</span>
                   </div>
 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col items-center">
                     <span className={`text-sm ${rateColor}`}>
                       {rate != null ? `${rateSign}${rateNum.toFixed(2)}%` : "변화 없음"}
                     </span>
@@ -86,7 +86,7 @@ const Land = ({ profile, setLand }: LandProps) => {
       )}
     </div>
 
-    <Search setLand={setLand} />
+    <Search lands={lands} setLand={setLand} />
   </div>)
 }
 

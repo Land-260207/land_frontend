@@ -6,10 +6,13 @@ import Map from "../map/map";
 import { useNavigate } from "react-router-dom";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import type { userType } from "../../common/types/user.type";
+import { landSocket } from "../../common/socket";
 
 const Main = () => {
   const navigate = useNavigate();
   const [land, setLand] = useState<landType | null>(null);
+  const [lands, setLands] = useState<landType[]>([]);
+  const [userLands, setUserLands] = useState<landType[]>([]);
   const [profile, setProfile] = useState<userType | null>(null);
   const EventSource = EventSourcePolyfill || NativeEventSource;
 
@@ -19,6 +22,21 @@ const Main = () => {
       navigate('/login');
       return;
     }
+
+    landSocket.connect();
+
+    landSocket.on('list', (data) => {
+      setLands(data.lands);
+    });
+
+    landSocket.on('my', (data) => {
+      setUserLands(data.lands);
+    });
+
+    landSocket.on('error_custom', (error) => {
+      console.error(error)
+      console.log('Land Socket: ', error.message);
+    });
 
     const userProfileEventSource = new EventSource(`${import.meta.env.VITE_BACKEND_URL}/user/profile`, {
       headers: {
@@ -42,6 +60,7 @@ const Main = () => {
     
     return () => {
       userProfileEventSource.close();
+      landSocket.close();
     }
   }, []);
 
@@ -49,8 +68,8 @@ const Main = () => {
     <div>
       <Map />
       <div className='absolute inset-0 pointer-events-none z-[2000] p-12'>
-        <User profile={profile} land={land} setLand={setLand} />
-        <Land profile={profile} setLand={setLand} />
+        <User landSocket={landSocket} profile={profile} land={land} setLand={setLand} />
+        <Land lands={lands} landSocket={landSocket} userLands={userLands} setUserLands={setUserLands} setLand={setLand} />
       </div>
     </div>
   );

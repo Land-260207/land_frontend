@@ -29,7 +29,7 @@ const Rank = () => {
   }, []);
 
   return (
-    <div className="font-semibold h-[36%] w-full bg-white/80 p-5 shadow-xl rounded-xl">
+    <div className="font-semibold h-[36%] w-full bg-white/80 p-5 shadow-xl rounded-xl pointer-events-auto">
       <p className="mb-5 text-2xl">랭킹</p>
       {rank ? (
         rank.map((user: userType, index: number) => (
