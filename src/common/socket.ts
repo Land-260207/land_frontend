@@ -10,3 +10,4 @@ const options = {
 
 export const landSocket = io(`${WS_URL}/land`, options);
 export const dealSocket = io(`${WS_URL}/deal`, options);
+export const chatSocket = io(`${WS_URL}/chat`, options);

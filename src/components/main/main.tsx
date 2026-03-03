@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import type { userType } from "../../common/types/user.type";
 import { landSocket } from "../../common/socket";
+import Chat from "../chat/chat";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const Main = () => {
       <div className='absolute inset-0 pointer-events-none z-[2000] p-12'>
         <User landSocket={landSocket} profile={profile} land={land} setLand={setLand} />
         <Land lands={lands} landSocket={landSocket} userLands={userLands} setUserLands={setUserLands} setLand={setLand} />
+        <Chat />
       </div>
     </div>
   );

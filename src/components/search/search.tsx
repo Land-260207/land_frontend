@@ -23,7 +23,7 @@ const Search = ({ lands, setLand }: SearchProps) => {
         value={landInput}
         onChange={(e) => setLandInput(e.target.value)}
         placeholder="토지 검색 (예: 강동구)"
-        className="w-full px-4 py-3 text-base rounded-xl focus:outline-none"
+        className="w-full px-4 py-4 text-base bg-transparent rounded-xl focus:outline-none"
       />
 
       <div className="h-[82%] rounded-xl overflow-y-auto">
